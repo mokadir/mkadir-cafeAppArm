@@ -1,0 +1,563 @@
+D=chr(36)
+A=chr(38)
+html=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew {A}amp; Bean - Specialty Coffee House</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700{A}family=Raleway:wght@300;400;600{A}display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="css/brew-bean.css">
+    <script>
+      (function(){{var t=localStorage.getItem("bb-theme");if(t){{document.documentElement.setAttribute("data-theme",t);}}else if(window.matchMedia("(prefers-color-scheme: light)").matches){{document.documentElement.setAttribute("data-theme","light");}}}})();
+    </script>
+</head>
+<body>
+  <div class="bb-container">
+    <div class="bb-row">
+      <div class="bb-left">
+        <div class="bb-left-inner">
+          <div class="bb-site-header">
+            <i class="fas fa-mug-hot fa-3x bb-site-logo"></i>
+            <h1 class="bb-site-name">Brew {A}amp; Bean</h1>
+            <p class="bb-tagline">Crafted with Passion</p>
+          </div>
+          <button class="bb-theme-toggle" id="bb-theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon" id="bb-theme-icon"></i>
+            <span id="bb-theme-label">Dark Mode</span>
+          </button>
+          <nav class="bb-site-nav">
+            <ul class="bb-site-nav-ul">
+              <li class="bb-page-nav-item">
+                <a href="#menu" class="bb-page-link active">
+                  <i class="fas fa-coffee bb-page-link-icon"></i>
+                  <span>Menu</span>
+                </a>
+              </li>
+              <li class="bb-page-nav-item">
+                <a href="#about" class="bb-page-link ">
+                  <i class="fas fa-leaf bb-page-link-icon"></i>
+                  <span>Our Story</span>
+                </a>
+              </li>
+              <li class="bb-page-nav-item">
+                <a href="#special" class="bb-page-link ">
+                  <i class="fas fa-star bb-page-link-icon"></i>
+                  <span>Specials</span>
+                </a>
+              </li>
+              <li class="bb-page-nav-item">
+                <a href="#contact" class="bb-page-link ">
+                  <i class="fas fa-envelope bb-page-link-icon"></i>
+                  <span>Contact</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="bb-sidebar-footer">
+            <p class="bb-hours-title">Open Hours</p>
+            <p class="bb-hours">Mon-Fri: 7AM - 8PM<br>Sat-Sun: 8AM - 10PM</p>
+            <div class="bb-social">
+              <a href="#" class="bb-social-link"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="bb-social-link"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="bb-social-link"><i class="fab fa-twitter"></i></a>
+                        </div></div>
+        </div>
+      </div>
+      <div class="bb-right">
+        <main class="bb-main">
+          <div id="menu" class="bb-page-content">
+                        <nav class="bb-black-bg bb-menu-nav">
+              <ul>
+                <li><a href="#menu" class="bb-tab-link active" data-tab="cold">Iced Coffee</a></li>
+                <li><a href="#menu" class="bb-tab-link" data-tab="hot">Hot Coffee</a></li>
+                <li><a href="#menu" class="bb-tab-link" data-tab="juice">Smoothies</a></li>
+                <li><a href="#menu" class="bb-tab-link" data-tab="pastry">Pastries</a></li>
+              </ul>
+            </nav>
+                        <div id="cold" class="bb-tab-content"><div class="bb-list">
+                <div class="bb-list-item">
+                  <img src="img/iced-americano.png" alt="Iced Americano" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Iced Americano<span class="bb-list-item-price">{D}4.50</span></h3>
+                    <p class="bb-list-item-description">Double shot espresso poured over ice with a splash of cold water. Refreshing and bold.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/iced-cappuccino.png" alt="Iced Cappuccino" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Iced Cappuccino<span class="bb-list-item-price">{D}5.25</span></h3>
+                    <p class="bb-list-item-description">Espresso with cold milk poured over ice, topped with a thick layer of frothed milk.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/iced-espresso.png" alt="Iced Espresso" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Iced Espresso<span class="bb-list-item-price">{D}3.75</span></h3>
+                    <p class="bb-list-item-description">A double shot of our signature espresso blend served over ice. Pure coffee intensity.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/iced-latte.png" alt="Iced Latte" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Iced Latte<span class="bb-list-item-price">{D}5.50</span></h3>
+                    <p class="bb-list-item-description">Espresso combined with chilled milk and ice. Silky smooth and perfectly balanced.</p>
+                  </div>
+                </div>
+            </div></div>
+            <div id="hot" class="bb-tab-content"><div class="bb-list">
+                <div class="bb-list-item">
+                  <img src="img/hot-americano.png" alt="Hot Americano" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Hot Americano<span class="bb-list-item-price">{D}3.50</span></h3>
+                    <p class="bb-list-item-description">Espresso shots topped with hot water to create a light layer of crema. Simple and classic.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-cappuccino.png" alt="Hot Cappuccino" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Hot Cappuccino<span class="bb-list-item-price">{D}4.75</span></h3>
+                    <p class="bb-list-item-description">Rich espresso with steamed milk, topped with a thick layer of foam and a dusting of cocoa.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-espresso.png" alt="Hot Espresso" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Hot Espresso<span class="bb-list-item-price">{D}3.00</span></h3>
+                    <p class="bb-list-item-description">Our signature single-origin espresso, pulled to perfection with a rich crema layer.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-latte.png" alt="Hot Latte" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Hot Latte<span class="bb-list-item-price">{D}4.50</span></h3>
+                    <p class="bb-list-item-description">Espresso with steamed milk and a light layer of foam. Our most popular hot beverage.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-mocha.png" alt="Hot Mocha" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Hot Mocha<span class="bb-list-item-price">{D}5.25</span></h3>
+                    <p class="bb-list-item-description">Rich chocolate ganache meets our double espresso, topped with steamed milk and a dusting of cocoa.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-flat-white.png" alt="Flat White" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Flat White<span class="bb-list-item-price">{D}4.75</span></h3>
+                    <p class="bb-list-item-description">Double ristretto poured over silky microfoam. A velvety smooth Australian classic.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-cortado.png" alt="Cortado" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Cortado<span class="bb-list-item-price">{D}4.25</span></h3>
+                    <p class="bb-list-item-description">Equal parts espresso and warm milk, served in a small glass. A Spanish classic with a bold bite.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-macchiato.png" alt="Macchiato" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Espresso Macchiato<span class="bb-list-item-price">{D}3.50</span></h3>
+                    <p class="bb-list-item-description">Single espresso marked with a dollop of steamed milk foam. Short, strong, and perfectly balanced.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/hot-turkish.png" alt="Turkish Coffee" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Turkish Coffee<span class="bb-list-item-price">{D}4.00</span></h3>
+                    <p class="bb-list-item-description">Finely ground beans brewed in a traditional cezve with cardamom. Rich, unfiltered, and aromatic.</p>
+                  </div>
+                </div>
+            </div></div>
+            <div id="juice" class="bb-tab-content"><div class="bb-list">
+                <div class="bb-list-item">
+                  <img src="img/smoothie-1.png" alt="Strawberry Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Strawberry Bliss<span class="bb-list-item-price">{D}6.50</span></h3>
+                    <p class="bb-list-item-description">Fresh strawberries blended with yogurt and honey. A refreshing burst of summer flavor.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-2.png" alt="Berry Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Berry Burst<span class="bb-list-item-price">{D}6.75</span></h3>
+                    <p class="bb-list-item-description">Mixed berries, banana, and a splash of almond milk. Packed with antioxidants.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-3.png" alt="Pineapple Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Tropical Twist<span class="bb-list-item-price">{D}7.00</span></h3>
+                    <p class="bb-list-item-description">Pineapple, mango, coconut milk, and a hint of lime. Your tropical escape in a cup.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-4.png" alt="Green Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Green Goddess<span class="bb-list-item-price">{D}7.25</span></h3>
+                    <p class="bb-list-item-description">Spinach, kale, apple, ginger, and lemon. A nutritious powerhouse to start your day.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-5.png" alt="Mango Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Mango Tango<span class="bb-list-item-price">{D}6.75</span></h3>
+                    <p class="bb-list-item-description">Ripe mangoes blended with coconut cream and a squeeze of lime. Pure tropical sunshine.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-6.png" alt="Protein Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Protein Power<span class="bb-list-item-price">{D}7.50</span></h3>
+                    <p class="bb-list-item-description">Banana, peanut butter, chocolate protein, and oat milk. Fuel for your day.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-7.png" alt="Acai Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Acai Antioxidant<span class="bb-list-item-price">{D}7.50</span></h3>
+                    <p class="bb-list-item-description">Acai berries blended with banana, blueberries, and coconut water. A superfood powerhouse.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/smoothie-8.png" alt="Coffee Smoothie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Coffee Kick<span class="bb-list-item-price">{D}7.25</span></h3>
+                    <p class="bb-list-item-description">Cold brew blended with banana, dates, almond milk, and a dash of cinnamon. Energy in a glass.</p>
+                  </div>
+                </div>
+            </div></div>
+            <div id="pastry" class="bb-tab-content"><div class="bb-list">
+                <div class="bb-list-item">
+                  <img src="img/special-01.jpg" alt="Croissant" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Butter Croissant<span class="bb-list-item-price">{D}3.50</span></h3>
+                    <p class="bb-list-item-description">Flaky, golden-brown French croissant made with layers of butter. Baked fresh daily.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-02.jpg" alt="Blueberry Muffin" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Blueberry Muffin<span class="bb-list-item-price">{D}3.75</span></h3>
+                    <p class="bb-list-item-description">Moist muffin loaded with wild blueberries and topped with a crumbly streusel.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-03.jpg" alt="Chocolate Cake" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Chocolate Fudge Cake<span class="bb-list-item-price">{D}5.50</span></h3>
+                    <p class="bb-list-item-description">Rich, decadent chocolate layer cake with a silky ganache frosting. A chocoholic dream.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-04.jpg" alt="Cinnamon Roll" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Cinnamon Roll<span class="bb-list-item-price">{D}4.25</span></h3>
+                    <p class="bb-list-item-description">Soft, pillowy dough swirled with cinnamon sugar and topped with cream cheese icing.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-05.jpg" alt="Banana Bread" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Banana Walnut Bread<span class="bb-list-item-price">{D}4.00</span></h3>
+                    <p class="bb-list-item-description">Moist banana bread studded with toasted walnuts and finished with a honey drizzle.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-06.jpg" alt="Brownie" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Double Fudge Brownie<span class="bb-list-item-price">{D}4.50</span></h3>
+                    <p class="bb-list-item-description">Dense, fudgy Belgian chocolate brownie with chocolate chunks. A decadent treat.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-07.jpg" alt="Lemon Tart" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Lemon Tart<span class="bb-list-item-price">{D}5.00</span></h3>
+                    <p class="bb-list-item-description">Zesty lemon curd in a buttery pastry shell, topped with toasted meringue. Bright and refreshing.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-08.jpg" alt="Scone" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">Cranberry Orange Scone<span class="bb-list-item-price">{D}3.75</span></h3>
+                    <p class="bb-list-item-description">Tender buttermilk scone with dried cranberries and fresh orange zest. Pairs perfectly with any brew.</p>
+                  </div>
+                </div>
+                <div class="bb-list-item">
+                  <img src="img/special-09.jpg" alt="Cheesecake" class="bb-list-item-img">
+                  <div class="bb-black-bg bb-list-item-text">
+                    <h3 class="bb-list-item-name">New York Cheesecake<span class="bb-list-item-price">{D}6.00</span></h3>
+                    <p class="bb-list-item-description">Creamy, dense cheesecake on a graham cracker crust, finished with a berry compote.</p>
+                  </div>
+                </div>
+            </div></div>
+          </div>
+          <div id="about" class="bb-page-content">
+            <div class="bb-black-bg bb-mb-20 bb-about-box-1">
+              <h2 class="bb-text-primary bb-about-header">Our Story</h2>
+              <div class="bb-list-item bb-list-item-2">
+                <img src="img/about-1.png" alt="Our coffee shop" class="bb-list-item-img bb-list-item-img-big">
+                <div class="bb-list-item-text-2">
+                  <p>Brew {A}amp; Bean was born from a simple belief: that great coffee has the power to bring people together. Founded in 2015, we source the finest beans from sustainable farms around the world.</p>
+                  <p>Every cup we serve is roasted in-house and crafted with care. We are not just a coffee shop - we are a community space where stories are shared and connections are made.</p>
+                                </div></div>
+          </div>
+            <div class="bb-black-bg bb-mb-20 bb-about-box-2">
+              <div class="bb-list-item bb-list-item-2">
+                <div class="bb-list-item-text-2">
+                  <h2 class="bb-text-primary">Our Values</h2>
+                  <p><strong>Sustainability:</strong> We partner with farms that practice ethical farming and fair trade.</p>
+                  <p><strong>Quality:</strong> From bean to cup, we never compromise on quality.</p>
+                  <p><strong>Community:</strong> We host local artists, musicians, and events to support our neighborhood.</p>
+                </div>
+                <img src="img/about-2.png" alt="Our values" class="bb-list-item-img bb-list-item-img-big bb-img-right">
+                                                        </div></div>
+            <div class="bb-black-bg bb-mb-20">
+              <h2 class="bb-text-primary bb-about-header">Meet the Team</h2>
+              <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;">
+                <div style="flex:1;min-width:140px;text-align:center;padding:16px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-user-circle" style="font-size:2.5rem;color:var(--accent);margin-bottom:8px;"></i>
+                  <h3 style="font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Elena Rossi</h3>
+                  <p style="font-size:0.8rem;color:var(--text-muted);">Head Barista &amp; Roast Master</p>
+                  <p style="font-size:0.78rem;color:var(--text-dim);margin-top:6px;">10 years crafting the perfect pour</p>
+                </div>
+                <div style="flex:1;min-width:140px;text-align:center;padding:16px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-user-circle" style="font-size:2.5rem;color:var(--accent);margin-bottom:8px;"></i>
+                  <h3 style="font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Marcus Chen</h3>
+                  <p style="font-size:0.8rem;color:var(--text-muted);">Pastry Chef</p>
+                  <p style="font-size:0.78rem;color:var(--text-dim);margin-top:6px;">Artisan baking since 2012</p>
+                </div>
+                <div style="flex:1;min-width:140px;text-align:center;padding:16px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-user-circle" style="font-size:2.5rem;color:var(--accent);margin-bottom:8px;"></i>
+                  <h3 style="font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Aisha Patel</h3>
+                  <p style="font-size:0.8rem;color:var(--text-muted);">Coffee Sourcer &amp; Sustainability Lead</p>
+                  <p style="font-size:0.78rem;color:var(--text-dim);margin-top:6px;">Direct trade partnerships worldwide</p>
+                </div>
+              </div>
+            </div>
+            <div class="bb-black-bg">
+              <h2 class="bb-text-primary bb-about-header">Our Process</h2>
+              <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;">
+                <div style="flex:1;min-width:160px;padding:12px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-seedling" style="color:var(--accent);margin-right:8px;"></i>
+                  <strong style="font-size:0.85rem;">Sourced</strong>
+                  <p style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Ethically farmed beans from small family growers</p>
+                </div>
+                <div style="flex:1;min-width:160px;padding:12px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-fire" style="color:var(--accent);margin-right:8px;"></i>
+                  <strong style="font-size:0.85rem;">Roasted</strong>
+                  <p style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Small-batch roasted to highlight each bean profile</p>
+                </div>
+                <div style="flex:1;min-width:160px;padding:12px;background:var(--bg-elevated);border-radius:8px;">
+                  <i class="fas fa-mug-hot" style="color:var(--accent);margin-right:8px;"></i>
+                  <strong style="font-size:0.85rem;">Brewed</strong>
+                  <p style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Expertly crafted by our skilled baristas</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="special" class="bb-page-content">
+            <h2 class="bb-section-title bb-black-bg">Chef Specials</h2>
+            <div class="bb-special-items">
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-01.jpg" alt="Hazelnut Latte">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Hazelnut Dream Latte</h3>
+                  <p class="bb-special-item-text">Our signature latte with house-made hazelnut syrup, topped with whipped cream and caramel drizzle.</p>
+                  <span class="bb-special-item-price">{D}6.50</span>
+                </div>
+              </div>
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-02.jpg" alt="Matcha Latte">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Ceremonial Matcha</h3>
+                  <p class="bb-special-item-text">Premium Japanese matcha whisked with steamed oat milk. Earthy, creamy, and vibrant green.</p>
+                  <span class="bb-special-item-price">{D}5.75</span>
+                </div>
+              </div>
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-03.jpg" alt="Cold Brew">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Nitro Cold Brew</h3>
+                  <p class="bb-special-item-text">Slow-steeped for 24 hours, infused with nitrogen for a silky-smooth, creamy finish. No ice needed.</p>
+                  <span class="bb-special-item-price">{D}5.00</span>
+                </div>
+              </div>
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-04.jpg" alt="Chai Latte">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Spiced Chai Latte</h3>
+                  <p class="bb-special-item-text">House-blend chai spices simmered with honey and steamed milk. Warmth in every sip.</p>
+                  <span class="bb-special-item-price">{D}5.25</span>
+                </div>
+              </div>
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-05.jpg" alt="Affogato">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Affogato Delight</h3>
+                  <p class="bb-special-item-text">A scoop of vanilla gelato topped with a hot shot of espresso. The perfect sweet-caffeine treat.</p>
+                  <span class="bb-special-item-price">{D}6.00</span>
+                </div>
+              </div>
+              <div class="bb-black-bg bb-special-item">
+                <img src="img/special-06.jpg" alt="Mocha">
+                <div class="bb-special-item-description">
+                  <h3 class="bb-text-primary bb-special-item-title">Dark Mocha</h3>
+                  <p class="bb-special-item-text">Rich dark chocolate ganache blended with our double espresso and steamed oat milk. Decadent and bold.</p>
+                  <span class="bb-special-item-price">{D}5.75</span>
+                </div></div>
+          </div>
+          
+          </div>
+          <div id="contact" class="bb-page-content">
+                        <div class="bb-black-bg bb-contact-text-container">
+              <h2 class="bb-text-primary">Get in Touch</h2>
+              <p>Have a question, feedback, or want to book our space for an event? We would love to hear from you! Drop us a message and we will get back to you within 24 hours.</p>
+              <img src="img/about-1.png" alt="Brew &amp; Bean interior" style="width:100%;border-radius:8px;margin-bottom:16px;">
+              <div class="bb-contact-info">
+                <p><i class="fas fa-map-marker-alt"></i> 123 Bean Street, Coffeeville, WA 98001</p>
+                <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> hello@brewnbean.com</p>
+              </div>
+              <div style="margin-top:20px;padding:12px;background:var(--bg-elevated);border-radius:8px;">
+                <p style="font-weight:600;margin-bottom:6px;color:var(--accent);"><i class="fas fa-clock"></i> Open Hours</p>
+                <p style="font-size:0.82rem;color:var(--text-muted);">Mon-Fri: 7AM - 8PM</p>
+                <p style="font-size:0.82rem;color:var(--text-muted);">Sat-Sun: 8AM - 10PM</p>
+              </div>
+            </div>
+            <div class="bb-black-bg bb-contact-form-container bb-align-right">
+                            <form action="" method="POST" id="contact-form">
+                              <div style="display:flex;flex-wrap:wrap;gap:16px;">
+                                <div class="bb-form-group" style="flex:1;min-width:180px;">
+                                  <input type="text" name="name" class="bb-form-control" placeholder="Your Name" required />
+                                </div>
+                                <div class="bb-form-group" style="flex:1;min-width:180px;">
+                                  <input type="email" name="email" class="bb-form-control" placeholder="Your Email" required />
+                                </div>
+                              </div>
+                              <div class="bb-form-group">
+                                <textarea rows="5" name="message" class="bb-form-control" placeholder="Your Message" required></textarea>
+                              </div>
+                              <div class="bb-form-group">
+                                <input type="text" name="subject" class="bb-form-control" placeholder="Subject" />
+                              </div>
+                              <div>
+                  <button type="submit" class="bb-btn-primary bb-align-right">
+                    Send Message <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+                            </form>
+            </div>
+          </div>
+        </main>
+        <footer class="bb-site-footer">
+          <p class="bb-black-bg bb-footer-text">{A}copy; 2026 Brew {A}amp; Bean Coffee House. All rights reserved.</p>
+                </footer>
+      </div></div></div>
+  <div class="bb-video-wrapper">
+      <i id="bb-video-control-button" class="fas fa-pause"></i>
+      <video autoplay muted loop id="bb-video">
+          <source src="video/wave-cafe-video-bg.mp4" type="video/mp4">
+      </video>
+  </div>
+  <script src="js/jquery-3.4.1.min.js"></script>
+    <script>
+    var BB_TABS={{cold:"Iced Coffee",hot:"Hot Coffee",juice:"Smoothies",pastry:"Pastries"}};
+    function setVideoSize(){{
+      var vidWidth=1920;var vidHeight=1080;
+      var ww=window.innerWidth;var wh=window.innerHeight;
+      var tempVidWidth=wh*vidWidth/vidHeight;
+      var tempVidHeight=ww*vidHeight/vidWidth;
+      var nw=tempVidWidth>ww?tempVidWidth:ww;
+      var nh=tempVidHeight>wh?tempVidHeight:wh;
+      var v=jQuery;v("#bb-video").css("width",nw).css("height",nh);
+    }}
+    function getTabFromHash(){{
+      var h=location.hash;
+      if(h.indexOf(",")>-1){{var p=h.split(",");return p[1];}}
+      return null;
+    }}
+    function openTab(tabId,el){{
+      if(!tabId)return;
+      jQuery(".bb-tab-content").hide();
+      jQuery("#"+tabId).show();
+      jQuery(".bb-tab-link").removeClass("active");
+      if(el){{jQuery(el).addClass("active");}}
+      else{{jQuery('.bb-tab-link[data-tab="'+tabId+'"]').addClass("active");}}
+    }}
+    function initPage(){{
+      var h=location.hash,tab=getTabFromHash();
+      if(h){{var pagePart=h.split(",")[0];highlightMenu(jQuery('.bb-page-link[href^="'+pagePart+'"]'));showPage(jQuery(pagePart));}}
+      else{{h=jQuery(".bb-page-link.active").attr("href");showPage(jQuery(h));}}
+      if(tab){{openTab(tab,null);}}
+    }}
+    function updateHash(page,tab){{
+      if(history.pushState){{
+        var h=page;if(tab)h+=","+tab;
+        history.pushState(null,null,h);
+      }}
+    }}
+    function highlightMenu(m){{
+      jQuery(".bb-page-link").removeClass("active");m.addClass("active");
+    }}
+    function showPage(p){{
+      jQuery(".bb-page-content").hide();p.show();
+      var tab=getTabFromHash();
+      if(p.is("#menu")&&tab){{openTab(tab,null);}}
+      else if(p.is("#menu")){{jQuery(".bb-tab-link.active").click();}}
+    }}
+    function setTheme(t){{
+      var r=document.documentElement,i=jQuery("#bb-theme-icon"),l=jQuery("#bb-theme-label");
+      r.setAttribute("data-theme",t);localStorage.setItem("bb-theme",t);
+      if(t==="light"){{i.removeClass("fa-moon").addClass("fa-sun");l.text("Light Mode");}}
+      else{{i.removeClass("fa-sun").addClass("fa-moon");l.text("Dark Mode");}}
+    }}
+    jQuery(document).ready(function(){{
+      initPage();
+      jQuery(".bb-page-link").click(function(e){{
+        e.preventDefault();
+        var page=jQuery(e.currentTarget.hash.split(",")[0]);
+        highlightMenu(jQuery(e.currentTarget));showPage(page);
+        updateHash(e.currentTarget.hash.split(",")[0],null);
+        if(window.innerWidth<=991){{var s=document.getElementById(page.replace("#",""));if(s){{s.scrollIntoView({{behavior:"smooth"}});}}}}
+      }});
+      jQuery(".bb-tab-link").on("click",function(e){{
+        e.preventDefault();
+        var tabId=jQuery(this).data("tab");
+        openTab(tabId,this);
+        updateHash("#menu",tabId);
+      }});
+      jQuery(".bb-tab-link.active").click();
+      setVideoSize();
+      jQuery(window).on("hashchange",function(){{initPage();}});
+      var t;window.onresize=function(){{clearTimeout(t);t=setTimeout(setVideoSize,100);}};
+      var b=jQuery("#bb-video-control-button");
+      b.on("click",function(e){{
+        var v=document.getElementById("bb-video");jQuery(this).removeClass();
+        if(v.paused){{v.play();jQuery(this).addClass("fas fa-pause");}}
+        else{{v.pause();jQuery(this).addClass("fas fa-play");}}
+      }});
+      jQuery("#contact-form").on("submit",function(e){{
+        e.preventDefault();alert("Thank you for reaching out! We will get back to you soon.");this.reset();
+      }});
+      jQuery("#bb-theme-toggle").on("click",function(){{
+        var c=document.documentElement.getAttribute("data-theme");
+        setTheme(c==="light"?"dark":"light");
+      }});
+      (function(){{
+        var t=localStorage.getItem("bb-theme")||(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+        setTheme(t);
+      }})();
+    }});
+  </script>
+</body>
+</html>
+"""
+
+with open("index.html","w",encoding="utf-8") as f:
+    f.write(html)
+print("index.html created - "+str(len(html))+" bytes")
