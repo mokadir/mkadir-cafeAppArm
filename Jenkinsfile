@@ -53,6 +53,7 @@ spec:
         BUILD_ENV = "${params.BUILD_ENV}"
         TRIVY_SEVERITY = "${params.TRIVY_SEVERITY}"
         IMAGE_TAG = "${params.IMAGE_TAG}"
+        BUILD_PLATFORM = "${params.BUILD_PLATFORM}"
         SHORT_SHA = ''
         APP_NAME = 'cafeapp-arm'
     }
@@ -160,7 +161,7 @@ EOF
                     def tarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}.tar"
 
                     try {
-                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --multi-platform --platform ${params.BUILD_PLATFORM}"
+                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --multi-platform --platform ${env.BUILD_PLATFORM}"
 
                         if (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) {
                             def latestTag = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest"
