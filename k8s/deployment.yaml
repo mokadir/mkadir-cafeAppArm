@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ns-cafeapp
+  namespace: ns-app
   name: cafeapp-deployment
   labels:
     app: cafeapp
@@ -19,7 +19,7 @@ spec:
         - name: dockerhub-cred
       containers:
         - name: cafeapp-container
-          image: mokadir/cafeapp:11
+          image: mokadir/cafeapp:1
           ports:
             - containerPort: 80
           resources:

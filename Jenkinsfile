@@ -45,6 +45,7 @@ spec:
         string(name: 'TRIVY_SEVERITY', defaultValue: 'HIGH,CRITICAL', description: 'Trivy severity threshold')
         booleanParam(name: 'FAIL_ON_VULN', defaultValue: false, description: 'Fail build on vulnerabilities')
         string(name: 'SLACK_CHANNEL', defaultValue: '', description: 'Optional Slack channel for notifications')
+        choice(name: 'BUILD_PLATFORM', choices: ['linux/amd64', 'arm'], description: 'Target platform/architecture for the Docker image')
     }
 
     environment {
@@ -91,6 +92,7 @@ spec:
                     echo "Image Tag    : ${env.IMAGE_TAG}"
                     echo "Branch       : ${params.GIT_BRANCH}"
                     echo "Environment  : ${env.BUILD_ENV}"
+                    echo "Platform     : ${params.BUILD_PLATFORM}"
                     echo "Commit SHA   : ${env.SHORT_SHA}"
                 }
             }
@@ -158,7 +160,7 @@ EOF
                     def tarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}.tar"
 
                     try {
-                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName}"
+                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --platform ${params.BUILD_PLATFORM}"
 
                         if (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) {
                             def latestTag = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest"
