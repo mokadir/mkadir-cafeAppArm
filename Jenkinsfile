@@ -23,7 +23,7 @@ spec:
       command: ['sh', '-c', 'cat']
       tty: true
     - name: kaniko
-      image: gcr.io/kaniko-project/executor:v1.24.0-debug
+      image: gcr.io/kaniko-project/executor:debug
       command: ['/busybox/sh', '-c', 'cat']
       tty: true
     - name: trivy
@@ -45,7 +45,7 @@ spec:
         string(name: 'TRIVY_SEVERITY', defaultValue: 'HIGH,CRITICAL', description: 'Trivy severity threshold')
         booleanParam(name: 'FAIL_ON_VULN', defaultValue: false, description: 'Fail build on vulnerabilities')
         string(name: 'SLACK_CHANNEL', defaultValue: '', description: 'Optional Slack channel for notifications')
-        choice(name: 'BUILD_PLATFORM', choices: ['linux/amd64', 'linux/arm', 'linux/arm64'], description: 'Target platform/architecture for the Docker image')
+        choice(name: 'BUILD_PLATFORM', choices: ['all', 'linux/amd64', 'linux/arm64'], description: 'Target platform/architecture for the Docker image. Use "all" to build both amd64 and arm64')
     }
 
     environment {
@@ -157,75 +157,86 @@ EOF
         stage('Build And Push Docker Image') {
             steps {
                 script {
-                    def imageName = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:${env.IMAGE_TAG}"
-                    def tarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}.tar"
+                    def targetPlatforms = params.BUILD_PLATFORM == 'all' ? ['linux/amd64', 'linux/arm64'] : [params.BUILD_PLATFORM]
+                    def useArchSuffix = targetPlatforms.size() > 1
 
                     try {
-                        def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --platform ${env.BUILD_PLATFORM}"
+                        for (platform in targetPlatforms) {
+                            def arch = platform.tokenize('/')[1]
+                            def archSuffix = useArchSuffix ? "-${arch}" : ''
+                            def imageName = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:${env.IMAGE_TAG}${archSuffix}"
+                            def latestTag = (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) ? "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest${archSuffix}" : ''
+                            def archTarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}${archSuffix}.tar"
 
-                        if (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) {
-                            def latestTag = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest"
-                            kanikoCommand += " --destination ${latestTag}"
-                        }
+                            def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --platform ${platform}"
+                            if (latestTag) {
+                                kanikoCommand += " --destination ${latestTag}"
+                            }
 
-                        kanikoCommand += " --label org.opencontainers.image.revision=${env.SHORT_SHA}"
-                        kanikoCommand += " --label org.opencontainers.image.source=https://github.com/${env.DOCKERHUB_ORG}/${env.APP_NAME}-website"
-                        kanikoCommand += " --label org.opencontainers.image.version=${env.IMAGE_TAG}"
-                        kanikoCommand += " --label com.${env.APP_NAME}.environment=${env.BUILD_ENV}"
-                        kanikoCommand += " --snapshot-mode=redo --use-new-run --cache=false"
+                            kanikoCommand += " --label org.opencontainers.image.revision=${env.SHORT_SHA}"
+                            kanikoCommand += " --label org.opencontainers.image.source=https://github.com/${env.DOCKERHUB_ORG}/${env.APP_NAME}-website"
+                            kanikoCommand += " --label org.opencontainers.image.version=${env.IMAGE_TAG}"
+                            kanikoCommand += " --label com.${env.APP_NAME}.environment=${env.BUILD_ENV}"
+                            kanikoCommand += " --snapshot-mode=redo --use-new-run --cache=false"
 
-                        if (!params.PUSH_IMAGE) {
-                            kanikoCommand += ' --no-push'
-                        }
+                            if (!params.PUSH_IMAGE) {
+                                kanikoCommand += ' --no-push'
+                            }
 
-                        if (params.RUN_CONTAINER_SCAN && !params.PUSH_IMAGE) {
-                            kanikoCommand += " --tar-path ${tarPath}"
-                        }
+                            if (params.RUN_CONTAINER_SCAN && !params.PUSH_IMAGE) {
+                                kanikoCommand += " --tar-path ${archTarPath}"
+                            }
 
-                        container('kaniko') {
-                            sh """
-                                set -eux
-                                export GODEBUG=http2client=0
-                                retry_count=0
-                                until [ "\$retry_count" -ge 3 ]; do
-                                    echo "Running Kaniko push attempt \$((retry_count + 1))"
-                                    ${kanikoCommand} && break
-                                    rc=\$?
-                                    echo "Kaniko push failed with exit code \$rc"
-                                    retry_count=\$((retry_count + 1))
-                                    if [ "\$retry_count" -ge 3 ]; then
-                                        exit \$rc
-                                    fi
-                                    echo "Retrying Kaniko push in 5s..."
-                                    sleep 5
-                                done
-                            """
+                            container('kaniko') {
+                                sh """
+                                    set -eux
+                                    export GODEBUG=http2client=0
+                                    echo 'Building image for platform: ${platform}'
+                                    retry_count=0
+                                    until [ "\$retry_count" -ge 3 ]; do
+                                        echo "Running Kaniko build attempt \$((retry_count + 1))"
+                                        ${kanikoCommand} && break
+                                        rc=\$?
+                                        echo "Kaniko build failed with exit code \$rc"
+                                        retry_count=\$((retry_count + 1))
+                                        if [ "\$retry_count" -ge 3 ]; then
+                                            exit \$rc
+                                        fi
+                                        echo "Retrying Kaniko build in 5s..."
+                                        sleep 5
+                                    done
+                                """
+                            }
+
+                            if (params.RUN_CONTAINER_SCAN) {
+                                container('trivy') {
+                                    def reportFile = "trivy-image-report-${arch}.txt"
+                                    if (params.PUSH_IMAGE) {
+                                        sh """
+                                            trivy image \
+                                                --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
+                                                --severity ${env.TRIVY_SEVERITY} \
+                                                --format table \
+                                                --output ${reportFile} \
+                                                ${imageName} || true
+                                        """
+                                    } else {
+                                        sh """
+                                            trivy image \
+                                                --input ${archTarPath} \
+                                                --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
+                                                --severity ${env.TRIVY_SEVERITY} \
+                                                --format table \
+                                                --output ${reportFile} \
+                                                || true
+                                        """
+                                    }
+                                }
+                            }
                         }
 
                         if (params.RUN_CONTAINER_SCAN) {
-                            container('trivy') {
-                                if (params.PUSH_IMAGE) {
-                                    sh """
-                                        trivy image \
-                                            --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
-                                            --severity ${env.TRIVY_SEVERITY} \
-                                            --format table \
-                                            --output trivy-image-report.txt \
-                                            ${imageName} || true
-                                    """
-                                } else {
-                                    sh """
-                                        trivy image \
-                                            --input ${tarPath} \
-                                            --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
-                                            --severity ${env.TRIVY_SEVERITY} \
-                                            --format table \
-                                            --output trivy-image-report.txt \
-                                            || true
-                                    """
-                                }
-                            }
-                            archiveArtifacts artifacts: 'trivy-image-report.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'trivy-image-report-*.txt', allowEmptyArchive: true
                         }
 
                     } catch (err) {
