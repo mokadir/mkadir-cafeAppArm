@@ -237,7 +237,7 @@ EOF
                                                 --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
                                                 --severity ${env.TRIVY_SEVERITY} \
                                                 --format table \
-                                                --output "trivy-image-report-$(basename \"${tarfile}\" .tar).txt" \
+                                                --output "trivy-image-report-\$(basename \"${tarfile}\" .tar).txt" \
                                                 || true
                                         done
                                     """
