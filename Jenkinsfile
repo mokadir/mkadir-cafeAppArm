@@ -196,18 +196,21 @@ EOF
                             sh '''
                                 set -eux
                                 export BUILDKIT_HOST=tcp://buildkit:1234
-                                # Wait for BuildKit to be ready
+                                # Wait for BuildKit port to be ready
                                 echo "Waiting for BuildKit to be ready..."
-                                for i in $(seq 1 30); do
-                                    if docker buildx inspect --builder jenkins-builder 2>/dev/null | grep -q "jenkins-builder"; then
-                                        echo "BuildKit is ready"
+                                apk add --no-cache netcat-openbsd > /dev/null 2>&1 || true
+                                for i in $(seq 1 60); do
+                                    if nc -z buildkit 1234 2>/dev/null; then
+                                        echo "BuildKit port is open"
                                         break
                                     fi
-                                    echo "Waiting for BuildKit... attempt $i/30"
-                                    sleep 2
+                                    echo "Waiting for BuildKit... attempt $i/60"
+                                    sleep 1
                                 done
+                                # Additional wait for buildkitd to fully initialize
+                                sleep 5
                                 docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --name jenkins-builder --use
+                                docker buildx create --driver remote --name jenkins-builder --use tcp://buildkit:1234
                                 docker buildx ls
                             '''
                         }
