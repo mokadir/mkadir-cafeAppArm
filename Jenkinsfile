@@ -24,7 +24,7 @@ spec:
     tty: true
     volumeMounts:
     - name: docker-socket
-      mountPath: /var/run
+      mountPath: /var/run/docker.sock
   - name: buildkit
     image: moby/buildkit:v0.12.0
     command: ['sh', '-c', 'tail -f /dev/null']
