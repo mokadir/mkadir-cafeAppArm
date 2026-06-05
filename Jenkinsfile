@@ -17,33 +17,33 @@ metadata:
   namespace: ns-jenkins
 spec:
   serviceAccountName: jenkins
-    containers:
-    - name: tools
-      image: docker:24.0.2
-      command: ['sh', '-c', 'cat']
-      tty: true
-    - name: buildkit
-      image: moby/buildkit:v0.11.0
-      command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --oci-worker-no-process-sandbox']
-      env:
-      - name: BUILDKITD_FLAGS
-        value: --oci-worker-no-process-sandbox
-      ports:
-      - containerPort: 1234
-        name: buildkit
-      securityContext:
-        privileged: true
-      resources:
-        requests:
-          cpu: 500m
-          memory: 1Gi
-        limits:
-          cpu: 2
-          memory: 4Gi
-    - name: trivy
-      image: aquasec/trivy:0.52.2
-      command: ['sh', '-c', 'cat']
-      tty: true
+  containers:
+  - name: tools
+    image: docker:24.0.2
+    command: ['sh', '-c', 'cat']
+    tty: true
+  - name: buildkit
+    image: moby/buildkit:v0.11.0
+    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --oci-worker-no-process-sandbox']
+    env:
+    - name: BUILDKITD_FLAGS
+      value: --oci-worker-no-process-sandbox
+    ports:
+    - containerPort: 1234
+      name: buildkit
+    securityContext:
+      privileged: true
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+  - name: trivy
+    image: aquasec/trivy:0.52.2
+    command: ['sh', '-c', 'cat']
+    tty: true
 '''
         }
     }
