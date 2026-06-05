@@ -24,16 +24,16 @@ spec:
     tty: true
   - name: buildkit
     image: moby/buildkit:v0.12.0
-    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234']
+    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --root /var/lib/buildkit']
     ports:
     - containerPort: 1234
       name: buildkit
     securityContext:
       privileged: true
     readinessProbe:
-      tcpSocket:
-        port: 1234
-      initialDelaySeconds: 10
+      exec:
+        command: ["sh", "-c", "nc -z localhost 1234"]
+      initialDelaySeconds: 5
       periodSeconds: 5
     resources:
       requests:
