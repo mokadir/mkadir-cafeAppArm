@@ -19,7 +19,7 @@ spec:
   serviceAccountName: jenkins
   containers:
   - name: tools
-    image: docker:24.0.2
+    image: docker:27.5.1
     command: ['sh', '-c', 'cat']
     tty: true
     volumeMounts:
