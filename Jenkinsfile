@@ -177,9 +177,7 @@ EOF
                             sh '''
                                 set -eux
                                 docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --name jenkins-builder tcp://buildkit:1234
-                                docker buildx use jenkins-builder
-                                docker buildx inspect --bootstrap
+                                docker buildx create --driver remote --name jenkins-builder --use --bootstrap tcp://buildkit:1234
                             '''
                         }
 
