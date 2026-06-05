@@ -22,6 +22,9 @@ spec:
     image: docker:24.0.2
     command: ['sh', '-c', 'cat']
     tty: true
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run
   - name: buildkit
     image: moby/buildkit:v0.12.0
     command: ['sh', '-c', 'tail -f /dev/null']
@@ -36,6 +39,11 @@ spec:
     image: aquasec/trivy:0.52.2
     command: ['sh', '-c', 'cat']
     tty: true
+  volumes:
+  - name: docker-socket
+    hostPath:
+      path: /var/run/docker.sock
+      type: Socket
 '''
         }
     }
