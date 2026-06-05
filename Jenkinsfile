@@ -24,24 +24,14 @@ spec:
     tty: true
   - name: buildkit
     image: moby/buildkit:v0.12.0
-    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --root /var/lib/buildkit']
-    ports:
-    - containerPort: 1234
-      name: buildkit
-    securityContext:
-      privileged: true
-    readinessProbe:
-      exec:
-        command: ["sh", "-c", "nc -z localhost 1234"]
-      initialDelaySeconds: 5
-      periodSeconds: 5
+    command: ['sh', '-c', 'tail -f /dev/null']
     resources:
       requests:
-        cpu: 500m
-        memory: 1Gi
+        cpu: 100m
+        memory: 256Mi
       limits:
-        cpu: 2
-        memory: 4Gi
+        cpu: 500m
+        memory: 512Mi
   - name: trivy
     image: aquasec/trivy:0.52.2
     command: ['sh', '-c', 'cat']
@@ -192,22 +182,9 @@ EOF
                         container('tools') {
                             sh '''
                                 set -eux
-                                export BUILDKIT_HOST=tcp://buildkit:1234
-                                # Wait for BuildKit port to be ready
-                                echo "Waiting for BuildKit to be ready..."
-                                apk add --no-cache netcat-openbsd > /dev/null 2>&1 || true
-                                for i in $(seq 1 60); do
-                                    if nc -z buildkit 1234 2>/dev/null; then
-                                        echo "BuildKit port is open"
-                                        break
-                                    fi
-                                    echo "Waiting for BuildKit... attempt $i/60"
-                                    sleep 1
-                                done
-                                # Additional wait for buildkitd to fully initialize
-                                sleep 5
-                                docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --name jenkins-builder --use tcp://buildkit:1234
+                                # Use docker-container driver instead of remote driver
+                                docker buildx create --driver docker-container --name jenkins-builder --use || true
+                                docker buildx inspect jenkins-builder
                                 docker buildx ls
                             '''
                         }
