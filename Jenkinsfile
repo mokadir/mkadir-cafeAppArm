@@ -177,7 +177,16 @@ EOF
                             sh '''
                                 set -eux
                                 docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --name jenkins-builder --use --bootstrap tcp://buildkit:1234
+                                for i in $(seq 1 20); do
+                                    if curl -sS --max-time 2 http://buildkit:1234/healthz >/dev/null 2>&1 || curl -sS --max-time 2 http://buildkit:1234/debug/vars >/dev/null 2>&1; then
+                                        echo 'BuildKit is available'
+                                        break
+                                    fi
+                                    echo 'Waiting for BuildKit to become ready...'
+                                    sleep 2
+                                done
+                                docker buildx create --driver remote --name jenkins-builder --use tcp://buildkit:1234
+                                docker buildx inspect --bootstrap
                             '''
                         }
 
