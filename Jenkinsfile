@@ -24,10 +24,7 @@ spec:
     tty: true
   - name: buildkit
     image: moby/buildkit:v0.12.0
-    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --oci-worker-no-process-sandbox']
-    env:
-    - name: BUILDKITD_FLAGS
-      value: --oci-worker-no-process-sandbox
+    command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234']
     ports:
     - containerPort: 1234
       name: buildkit
@@ -36,7 +33,7 @@ spec:
     readinessProbe:
       tcpSocket:
         port: 1234
-      initialDelaySeconds: 5
+      initialDelaySeconds: 10
       periodSeconds: 5
     resources:
       requests:
