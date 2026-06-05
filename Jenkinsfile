@@ -185,8 +185,8 @@ EOF
                                     echo 'Waiting for BuildKit to become ready...'
                                     sleep 2
                                 done
-                                docker buildx create --driver remote --name jenkins-builder --use tcp://buildkit:1234
-                                docker buildx inspect --bootstrap
+                                docker buildx create --driver remote --name jenkins-builder --use --bootstrap tcp://buildkit:1234
+                                docker buildx ls
                             '''
                         }
 
