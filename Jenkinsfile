@@ -176,8 +176,9 @@ EOF
                         container('tools') {
                             sh '''
                                 set -eux
+                                export BUILDKIT_HOST=tcp://buildkit:1234
                                 docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --driver-opt addr=tcp://buildkit:1234 --name jenkins-builder --use
+                                docker buildx create --driver remote --name jenkins-builder --use
                                 docker buildx ls
                             '''
                         }
