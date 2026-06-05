@@ -177,7 +177,7 @@ EOF
                             sh '''
                                 set -eux
                                 docker buildx rm jenkins-builder || true
-                                docker buildx create --driver remote --driver-opt "addr=tcp://buildkit:1234" --name jenkins-builder
+                                docker buildx create --driver remote --name jenkins-builder tcp://buildkit:1234
                                 docker buildx use jenkins-builder
                                 docker buildx inspect --bootstrap
                             '''
