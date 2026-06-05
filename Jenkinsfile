@@ -17,15 +17,29 @@ metadata:
   namespace: ns-jenkins
 spec:
   serviceAccountName: jenkins
-  containers:
+    containers:
     - name: tools
       image: docker:24.0.2
       command: ['sh', '-c', 'cat']
       tty: true
     - name: buildkit
       image: moby/buildkit:v0.11.0
-      command: ['buildkitd', '--addr', 'tcp://0.0.0.0:1234']
-      tty: true
+      command: ['sh', '-c', 'buildkitd --addr tcp://0.0.0.0:1234 --oci-worker-no-process-sandbox']
+      env:
+      - name: BUILDKITD_FLAGS
+        value: --oci-worker-no-process-sandbox
+      ports:
+      - containerPort: 1234
+        name: buildkit
+      securityContext:
+        privileged: true
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: 2
+          memory: 4Gi
     - name: trivy
       image: aquasec/trivy:0.52.2
       command: ['sh', '-c', 'cat']
@@ -177,6 +191,16 @@ EOF
                             sh '''
                                 set -eux
                                 export BUILDKIT_HOST=tcp://buildkit:1234
+                                # Wait for BuildKit to be ready
+                                echo "Waiting for BuildKit to be ready..."
+                                for i in $(seq 1 30); do
+                                    if docker buildx inspect --builder jenkins-builder 2>/dev/null | grep -q "jenkins-builder"; then
+                                        echo "BuildKit is ready"
+                                        break
+                                    fi
+                                    echo "Waiting for BuildKit... attempt $i/30"
+                                    sleep 2
+                                done
                                 docker buildx rm jenkins-builder || true
                                 docker buildx create --driver remote --name jenkins-builder --use
                                 docker buildx ls
