@@ -8,7 +8,7 @@
 pipeline {
     agent {
         kubernetes {
-            label 'cafeapp-kaniko-agent'
+            label 'cafeapp-buildkit-agent'
             defaultContainer 'tools'
             yaml '''
 apiVersion: v1
@@ -19,12 +19,12 @@ spec:
   serviceAccountName: jenkins
   containers:
     - name: tools
-      image: python:3.12-slim
+      image: docker:24.0.2
       command: ['sh', '-c', 'cat']
       tty: true
-    - name: kaniko
-      image: gcr.io/kaniko-project/executor:v1.24.0-debug
-      command: ['/busybox/sh', '-c', 'cat']
+    - name: buildkit
+      image: moby/buildkit:v0.11.0
+      command: ['buildkitd', '--addr', 'tcp://0.0.0.0:1234']
       tty: true
     - name: trivy
       image: aquasec/trivy:0.52.2
@@ -69,6 +69,9 @@ spec:
     stages {
         stage('Checkout') {
             steps {
+                container('tools') {
+                    sh 'apk add --no-cache git'
+                }
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: "*/${params.GIT_BRANCH}"]],
@@ -81,7 +84,7 @@ spec:
         stage('Resolve Metadata') {
             steps {
                 container('tools') {
-                    sh 'apt-get update -qq && apt-get install -y -qq git >/dev/null 2>&1'
+                    sh 'apk add --no-cache git'
                 }
                 script {
                     sh 'git config --global --add safe.directory ${WORKSPACE}'
@@ -104,12 +107,14 @@ spec:
                 container('tools') {
                     sh '''
                         set -eux
-                        python --version
-                        pip --version
+                        apk update
+                        apk add --no-cache python3 py3-pip curl ca-certificates bash
+                        if ! command -v python >/dev/null 2>&1; then
+                            ln -sf /usr/bin/python3 /usr/local/bin/python
+                        fi
+                        docker --version
+                        docker buildx version
                     '''
-                }
-                container('kaniko') {
-                    sh '/kaniko/executor version'
                 }
                 container('trivy') {
                     sh 'trivy --version'
@@ -122,7 +127,7 @@ spec:
                 container('tools') {
                     sh '''
                         set -eux
-                        python generate.py
+                        python3 generate.py
                         ls -la index.html
                         echo "Static site generated successfully"
                     '''
@@ -134,11 +139,11 @@ spec:
             when { expression { params.PUSH_IMAGE } }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    container('kaniko') {
+                    container('tools') {
                         sh '''
                             set -eu
-                            mkdir -p /kaniko/.docker
-                            cat > /kaniko/.docker/config.json <<EOF
+                            mkdir -p /root/.docker
+                            cat > /root/.docker/config.json <<EOF
 {
   "auths": {
     "https://index.docker.io/v1/": {
@@ -158,85 +163,87 @@ EOF
             steps {
                 script {
                     def targetPlatforms = params.BUILD_PLATFORM == 'all' ? ['linux/amd64', 'linux/arm64'] : [params.BUILD_PLATFORM]
-                    def useArchSuffix = targetPlatforms.size() > 1
+                    def imageName = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:${env.IMAGE_TAG}"
+                    def latestTag = (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) ? "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest" : ''
+                    def buildArgs = [
+                        "VCS_REF=${env.SHORT_SHA}",
+                        "SOURCE_URL=https://github.com/${env.DOCKERHUB_ORG}/${env.APP_NAME}-website",
+                        "VERSION=${env.IMAGE_TAG}",
+                        "ENVIRONMENT=${env.BUILD_ENV}"
+                    ]
 
                     try {
-                        for (platform in targetPlatforms) {
-                            def arch = platform.tokenize('/')[1]
-                            def archSuffix = useArchSuffix ? "-${arch}" : ''
-                            def imageName = "${env.DOCKERHUB_ORG}/${env.APP_NAME}:${env.IMAGE_TAG}${archSuffix}"
-                            def latestTag = (params.PUSH_IMAGE && params.PUSH_LATEST_TAG) ? "${env.DOCKERHUB_ORG}/${env.APP_NAME}:latest${archSuffix}" : ''
-                            def archTarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}${archSuffix}.tar"
+                        container('tools') {
+                            sh '''
+                                set -eux
+                                docker buildx rm jenkins-builder || true
+                                docker buildx create --driver remote --driver-opt "addr=tcp://buildkit:1234" --name jenkins-builder
+                                docker buildx use jenkins-builder
+                                docker buildx inspect --bootstrap
+                            '''
+                        }
 
-                            def kanikoCommand = "/kaniko/executor --context ${env.WORKSPACE} --dockerfile ${env.WORKSPACE}/Dockerfile --destination ${imageName} --platform ${platform}"
+                        if (params.PUSH_IMAGE) {
+                            def platformList = targetPlatforms.join(',')
+                            def buildCmd = "docker buildx build --platform ${platformList} --tag ${imageName}"
                             if (latestTag) {
-                                kanikoCommand += " --destination ${latestTag}"
+                                buildCmd += " --tag ${latestTag}"
                             }
+                            buildArgs.each { arg -> buildCmd += " --build-arg ${arg}" }
+                            buildCmd += " --push ${env.WORKSPACE}"
 
-                            kanikoCommand += " --label org.opencontainers.image.revision=${env.SHORT_SHA}"
-                            kanikoCommand += " --label org.opencontainers.image.source=https://github.com/${env.DOCKERHUB_ORG}/${env.APP_NAME}-website"
-                            kanikoCommand += " --label org.opencontainers.image.version=${env.IMAGE_TAG}"
-                            kanikoCommand += " --label com.${env.APP_NAME}.environment=${env.BUILD_ENV}"
-                            kanikoCommand += " --snapshot-mode=redo --use-new-run --cache=false"
-
-                            if (!params.PUSH_IMAGE) {
-                                kanikoCommand += ' --no-push'
-                            }
-
-                            if (params.RUN_CONTAINER_SCAN && !params.PUSH_IMAGE) {
-                                kanikoCommand += " --tar-path ${archTarPath}"
-                            }
-
-                            container('kaniko') {
+                            container('tools') {
                                 sh """
                                     set -eux
-                                    export GODEBUG=http2client=0
-                                    echo 'Building image for platform: ${platform}'
-                                    retry_count=0
-                                    until [ "\$retry_count" -ge 3 ]; do
-                                        echo "Running Kaniko build attempt \$((retry_count + 1))"
-                                        ${kanikoCommand} && break
-                                        rc=\$?
-                                        echo "Kaniko build failed with exit code \$rc"
-                                        retry_count=\$((retry_count + 1))
-                                        if [ "\$retry_count" -ge 3 ]; then
-                                            exit \$rc
-                                        fi
-                                        echo "Retrying Kaniko build in 5s..."
-                                        sleep 5
-                                    done
+                                    echo 'Building image for platforms: ${platformList}'
+                                    ${buildCmd}
                                 """
                             }
+                        } else {
+                            for (platform in targetPlatforms) {
+                                def arch = platform.tokenize('/')[1]
+                                def archTarPath = "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}-${arch}.tar"
+                                def buildCmd = "docker buildx build --platform ${platform}"
+                                buildArgs.each { arg -> buildCmd += " --build-arg ${arg}" }
+                                buildCmd += " --output type=tar,dest=${archTarPath} ${env.WORKSPACE}"
 
-                            if (params.RUN_CONTAINER_SCAN) {
-                                container('trivy') {
-                                    def reportFile = "trivy-image-report-${arch}.txt"
-                                    if (params.PUSH_IMAGE) {
-                                        sh """
-                                            trivy image \
-                                                --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
-                                                --severity ${env.TRIVY_SEVERITY} \
-                                                --format table \
-                                                --output ${reportFile} \
-                                                ${imageName} || true
-                                        """
-                                    } else {
-                                        sh """
-                                            trivy image \
-                                                --input ${archTarPath} \
-                                                --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
-                                                --severity ${env.TRIVY_SEVERITY} \
-                                                --format table \
-                                                --output ${reportFile} \
-                                                || true
-                                        """
-                                    }
+                                container('tools') {
+                                    sh """
+                                        set -eux
+                                        echo 'Building image tar for platform: ${platform}'
+                                        ${buildCmd}
+                                    """
                                 }
                             }
                         }
 
                         if (params.RUN_CONTAINER_SCAN) {
-                            archiveArtifacts artifacts: 'trivy-image-report-*.txt', allowEmptyArchive: true
+                            container('trivy') {
+                                if (params.PUSH_IMAGE) {
+                                    sh """
+                                        trivy image \
+                                            --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
+                                            --severity ${env.TRIVY_SEVERITY} \
+                                            --format table \
+                                            --output trivy-image-report.txt \
+                                            ${imageName} || true
+                                    """
+                                } else {
+                                    def tarList = targetPlatforms.collect { platform -> "${env.WORKSPACE}/${env.APP_NAME}-${env.IMAGE_TAG}-${platform.tokenize('/')[1]}.tar" }.join(' ')
+                                    sh """
+                                        for tarfile in ${tarList}; do
+                                            trivy image \
+                                                --input "${tarfile}" \
+                                                --exit-code ${params.FAIL_ON_VULN ? '1' : '0'} \
+                                                --severity ${env.TRIVY_SEVERITY} \
+                                                --format table \
+                                                --output "trivy-image-report-$(basename \"${tarfile}\" .tar).txt" \
+                                                || true
+                                        done
+                                    """
+                                }
+                            }
+                            archiveArtifacts artifacts: 'trivy-image-report*.txt', allowEmptyArchive: true
                         }
 
                     } catch (err) {

@@ -17,6 +17,26 @@ RUN python generate.py
 # =====================================================
 FROM nginx:1.27-alpine
 
+ARG VCS_REF=''
+ARG SOURCE_URL=''
+ARG VERSION=''
+ARG ENVIRONMENT=''
+
+LABEL org.opencontainers.image.revision=$VCS_REF \
+      org.opencontainers.image.source=$SOURCE_URL \
+      org.opencontainers.image.version=$VERSION \
+      com.cafeapp-arm.environment=$ENVIRONMENT
+
+ARG VCS_REF=''
+ARG SOURCE_URL=''
+ARG VERSION=''
+ARG ENVIRONMENT=''
+
+LABEL org.opencontainers.image.revision=$VCS_REF \
+      org.opencontainers.image.source=$SOURCE_URL \
+      org.opencontainers.image.version=$VERSION \
+      com.cafeapp-arm.environment=$ENVIRONMENT
+
 # Copy everything from the builder stage
 COPY --from=builder /app/index.html        /usr/share/nginx/html/index.html
 COPY --from=builder /app/css/              /usr/share/nginx/html/css/
