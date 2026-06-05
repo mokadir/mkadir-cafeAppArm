@@ -23,7 +23,7 @@ spec:
       command: ['sh', '-c', 'cat']
       tty: true
     - name: kaniko
-      image: gcr.io/kaniko-project/executor:v1.24.0
+      image: gcr.io/kaniko-project/executor:v1.24.0-debug
       command: ['/busybox/sh', '-c', 'cat']
       tty: true
     - name: trivy
