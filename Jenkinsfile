@@ -45,7 +45,7 @@ spec:
         string(name: 'TRIVY_SEVERITY', defaultValue: 'HIGH,CRITICAL', description: 'Trivy severity threshold')
         booleanParam(name: 'FAIL_ON_VULN', defaultValue: false, description: 'Fail build on vulnerabilities')
         string(name: 'SLACK_CHANNEL', defaultValue: '', description: 'Optional Slack channel for notifications')
-        choice(name: 'BUILD_PLATFORM', choices: ['all', 'linux/amd64', 'linux/arm64'], description: 'Target platform/architecture for the Docker image. Use "all" to build both amd64 and arm64')
+        choice(name: 'BUILD_PLATFORM', choices: ['linux/arm64', 'linux/amd64', 'all'], description: 'Target platform/architecture for the Docker image. Use "all" to build both amd64 and arm64')
     }
 
     environment {
